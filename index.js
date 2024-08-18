@@ -2,10 +2,16 @@ import express from "express"
 import mongoose from "mongoose"
 import bodyParser from "body-parser"
 import dotenv from "dotenv"
-import route from "./routes/userRoute.js"
+import userRoute from "./routes/userRoute.js"
+import indexRoute from "./routes/indexRoute.js"
+import { engine } from 'express-handlebars';
 
 const app = express ();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.engine('hbs', engine({extname: 'hbs'}));
+app.set('view engine', 'hbs');
+app.set('views', './resources/views')
 
 dotenv.config();
 
@@ -19,4 +25,5 @@ mongoose.connect(MONGOURL).then(()=>{
     })
 }).catch(error => console.log(error));
 
-app.use("/api/user", route)
+app.use("/api/user", userRoute);
+app.use("/", indexRoute);
